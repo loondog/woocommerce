@@ -1,16 +1,29 @@
 <?php
 /**
+<<<<<<< HEAD
  * This class represents an event used to record a Tracks event
  *
  * @package WooCommerce\Tracks
  */
 
 defined( 'ABSPATH' ) || exit;
+=======
+ * This class represents an event used to record a Tracks event.
+ *
+ * @class   WC_Tracks_Event
+ * @package WooCommerce/Classes
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+>>>>>>> c1e3ce6a3... Tracks: Add a PHP client
 
 /**
  * WC_Tracks_Event class.
  */
 class WC_Tracks_Event {
+<<<<<<< HEAD
 
 	/**
 	 * Event name regex.
@@ -22,6 +35,10 @@ class WC_Tracks_Event {
 	 */
 	const PROP_NAME_REGEX = '/^[a-z_][a-z0-9_]*$/';
 
+=======
+	const EVENT_NAME_REGEX = '/^(([a-z0-9]+)_){2}([a-z0-9_]+)$/';
+	const PROP_NAME_REGEX  = '/^[a-z_][a-z0-9_]*$/';
+>>>>>>> c1e3ce6a3... Tracks: Add a PHP client
 	/**
 	 * Error message as WP_Error.
 	 *
@@ -49,7 +66,11 @@ class WC_Tracks_Event {
 	/**
 	 * Record Tracks event
 	 *
+<<<<<<< HEAD
 	 * @return bool|WP_Error True on success, WP_Error on failure.
+=======
+	 * @return bool|WP_Error         True on success, WP_Error on failure.
+>>>>>>> c1e3ce6a3... Tracks: Add a PHP client
 	 */
 	public function record() {
 		return WC_Tracks_Client::record_event( $this );
@@ -59,7 +80,11 @@ class WC_Tracks_Event {
 	 * Annotate the event with all relevant info.
 	 *
 	 * @param  array $event Event arguments.
+<<<<<<< HEAD
 	 * @return bool|WP_Error True on success, WP_Error on failure.
+=======
+	 * @return bool|WP_Error         True on success, WP_Error on failure.
+>>>>>>> c1e3ce6a3... Tracks: Add a PHP client
 	 */
 	public static function validate_and_sanitize( $event ) {
 		$event = (object) $event;
@@ -69,7 +94,11 @@ class WC_Tracks_Event {
 			return new WP_Error( 'invalid_event', 'A valid event must be specified via `_en`', 400 );
 		}
 
+<<<<<<< HEAD
 		// Delete non-routable addresses otherwise geoip will discard the record entirely.
+=======
+		// delete non-routable addresses otherwise geoip will discard the record entirely.
+>>>>>>> c1e3ce6a3... Tracks: Add a PHP client
 		if ( property_exists( $event, '_via_ip' ) && preg_match( '/^192\.168|^10\./', $event->_via_ip ) ) {
 			unset( $event->_via_ip );
 		}
@@ -111,7 +140,11 @@ class WC_Tracks_Event {
 			return '';
 		}
 
+<<<<<<< HEAD
 		return esc_url_raw( WC_Tracks_Client::PIXEL . '?' . http_build_query( $validated ) );
+=======
+		return WC_Tracks_Client::PIXEL . '?' . http_build_query( $validated );
+>>>>>>> c1e3ce6a3... Tracks: Add a PHP client
 	}
 
 	/**

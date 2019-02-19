@@ -158,7 +158,7 @@ class WC_Tracks_Client {
 				}
 			}
 		}
-		
+
 		return $anon_id;
 	}
 }

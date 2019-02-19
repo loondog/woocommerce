@@ -52,13 +52,34 @@ class WC_Site_Tracking {
 		return true;
 	}
 
+	public static function enqueue_scripts( $allow_tracking ) {
+		$early_return = $allow_tracking ? 'false' : 'true';
+
+		wc_enqueue_js( "
+			window.wcSettings = window.wcSettings || {};
+			window.wcSettings.recordEvent = function( event, eventProperties ) {
+				if ( " . $early_return . " ) {
+					return;
+				}
+				window._tkq = window._tkq || [];
+				window._tkq.push( [ 'recordEvent', event, eventProperties ] );
+			}
+		" );
+	}
+
 	/**
 	 * Init tracking.
 	 */
 	public static function init() {
-		if ( ! self::is_tracking_enabled() ) {
+		$allow_tracking = self::is_tracking_enabled();
+
+		self::enqueue_scripts( $allow_tracking );
+
+		if ( ! $allow_tracking ) {
 			return;
 		}
+
+		wp_enqueue_script( 'woo-tracks', '//stats.wp.com/w.js', array(), gmdate( 'YW' ), true );
 
 		add_action( 'edit_post', array( 'WC_Site_Tracking', 'tracks_product_updated' ), 10, 2 );
 	}

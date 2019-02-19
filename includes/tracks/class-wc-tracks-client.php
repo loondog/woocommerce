@@ -30,11 +30,7 @@ class WC_Tracks_Client {
 	/**
 	 * Record a Tracks event
 	 *
-<<<<<<< HEAD
 	 * @param  array $event Array of event properties.
-=======
-	 * @param  array $event Array of event properties
->>>>>>> c1e3ce6a3... Tracks: Add a PHP client
 	 * @return bool|WP_Error         True on success, WP_Error on failure.
 	 */
 	public static function record_event( $event ) {
@@ -68,7 +64,7 @@ class WC_Tracks_Client {
 		$response = wp_safe_remote_get(
 			$pixel,
 			array(
-				'blocking'    => true, // The default, but being explicit here
+				'blocking'    => true, // The default, but being explicit here.
 				'redirection' => 2,
 				'httpversion' => '1.1',
 			)

@@ -11,6 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * WC_Tracks_Event class.
  */
 class WC_Tracks_Event {
+
 	/**
 	 * Event name regex.
 	 */
@@ -48,11 +49,7 @@ class WC_Tracks_Event {
 	/**
 	 * Record Tracks event
 	 *
-<<<<<<< HEAD
 	 * @return bool|WP_Error True on success, WP_Error on failure.
-=======
-	 * @return bool|WP_Error         True on success, WP_Error on failure.
->>>>>>> c1e3ce6a3... Tracks: Add a PHP client
 	 */
 	public function record() {
 		return WC_Tracks_Client::record_event( $this );
@@ -62,11 +59,7 @@ class WC_Tracks_Event {
 	 * Annotate the event with all relevant info.
 	 *
 	 * @param  array $event Event arguments.
-<<<<<<< HEAD
 	 * @return bool|WP_Error True on success, WP_Error on failure.
-=======
-	 * @return bool|WP_Error         True on success, WP_Error on failure.
->>>>>>> c1e3ce6a3... Tracks: Add a PHP client
 	 */
 	public static function validate_and_sanitize( $event ) {
 		$event = (object) $event;

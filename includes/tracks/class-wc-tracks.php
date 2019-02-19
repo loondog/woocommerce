@@ -144,4 +144,3 @@ class WC_Tracks {
 		return $event_obj->record();
 	}
 }
-

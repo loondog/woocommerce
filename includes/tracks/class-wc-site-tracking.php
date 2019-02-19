@@ -52,17 +52,15 @@ class WC_Site_Tracking {
 		return true;
 	}
 
-	public static function enqueue_scripts( $allow_tracking ) {
-		$early_return = $allow_tracking ? 'false' : 'true';
+	public static function enqueue_scripts() {
+		wp_enqueue_script( 'woo-tracks', '//stats.wp.com/w.js', array(), gmdate( 'YW' ), true );
 
 		wc_enqueue_js( "
 			window.wcSettings = window.wcSettings || {};
 			window.wcSettings.recordEvent = function( event, eventProperties ) {
-				if ( " . $early_return . " ) {
-					return;
-				}
+				var eventName = '" . WC_Tracks::PREFIX . "' + event;
 				window._tkq = window._tkq || [];
-				window._tkq.push( [ 'recordEvent', event, eventProperties ] );
+				window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
 			}
 		" );
 	}
@@ -71,15 +69,15 @@ class WC_Site_Tracking {
 	 * Init tracking.
 	 */
 	public static function init() {
-		$allow_tracking = self::is_tracking_enabled();
-
-		self::enqueue_scripts( $allow_tracking );
-
-		if ( ! $allow_tracking ) {
+		if ( ! self::is_tracking_enabled() ) {
+			wc_enqueue_js( "
+				window.wcSettings = window.wcSettings || {};
+				window.wcSettings.recordEvent = function() {};
+			" );
 			return;
 		}
 
-		wp_enqueue_script( 'woo-tracks', '//stats.wp.com/w.js', array(), gmdate( 'YW' ), true );
+		self::enqueue_scripts();
 
 		add_action( 'edit_post', array( 'WC_Site_Tracking', 'tracks_product_updated' ), 10, 2 );
 	}

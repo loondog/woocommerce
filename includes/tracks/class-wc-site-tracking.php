@@ -64,8 +64,10 @@ class WC_Site_Tracking {
 		wc_enqueue_js(
 			"
 			window.wcSettings = window.wcSettings || {};
-			window.wcSettings.recordEvent = function( event, eventProperties ) {
-				var eventName = '" . WC_Tracks::PREFIX . "' + event;
+			window.wcSettings.recordEvent = function( name, properties ) {
+				var eventName = '" . WC_Tracks::PREFIX . "' + name;
+				var eventProperties = properties || {};
+				eventProperties.url = '" . home_url() . "'
 				window._tkq = window._tkq || [];
 				window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
 			}

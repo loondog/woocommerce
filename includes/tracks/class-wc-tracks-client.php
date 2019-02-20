@@ -101,7 +101,7 @@ class WC_Tracks_Client {
 	public static function get_identity( $user_id ) {
 		if ( class_exists( 'Jetpack' ) ) {
 
-			include_once ABSPATH . 'wp-content/plugins/jetpack/_inc/lib/tracks/client.php';
+			include_once trailingslashit( WP_PLUGIN_DIR ) . 'jetpack/_inc/lib/tracks/client.php';
 
 			if ( function_exists( 'jetpack_tracks_get_identity' ) ) {
 				return jetpack_tracks_get_identity( $user_id );
@@ -113,13 +113,13 @@ class WC_Tracks_Client {
 
 		// If there is no cookie, apply a saved id.
 		if ( ! $anon_id ) {
-			$anon_id = get_user_meta( $user_id, 'woo_tracks_anon_id', true );
+			$anon_id = get_user_meta( $user_id, '_woo_tracks_anon_id', true );
 		}
 
 		// If an id is still not found, create one and save it.
 		if ( ! $anon_id ) {
 			$anon_id = self::get_anon_id();
-			update_user_meta( $user_id, 'woo_tracks_anon_id', $anon_id );
+			update_user_meta( $user_id, '_woo_tracks_anon_id', $anon_id );
 		}
 
 		if ( ! isset( $_COOKIE['tk_ai'] ) ) {
@@ -144,12 +144,12 @@ class WC_Tracks_Client {
 
 			// Did the browser send us a cookie?
 			if ( isset( $_COOKIE['tk_ai'] ) ) {
-				$anon_id = wp_unslash( $_COOKIE['tk_ai'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+					$anon_id = sanitize_text_field( wp_unslash( $_COOKIE['tk_ai'] ) );
 			} else {
 
 				$binary = '';
 
-				// Generate a new anonId and try to save it in the browser's cookies
+				// Generate a new anonId and try to save it in the browser's cookies.
 				// Note that base64-encoding an 18 character string generates a 24-character anon id.
 				for ( $i = 0; $i < 18; ++$i ) {
 					$binary .= chr( wp_rand( 0, 255 ) );
@@ -157,8 +157,7 @@ class WC_Tracks_Client {
 
 				$anon_id = 'woo:' . base64_encode( $binary );
 
-				// Don't set cookie on API requests, https://github.com/Automattic/jetpack/pull/7934.
-				// @todo: Do we need these checks? If so, should they be included in wc_setcookie?
+				// Don't set cookie on API requests.
 				if (
 					! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) &&
 					! ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
@@ -168,6 +167,6 @@ class WC_Tracks_Client {
 			}
 		}
 
-		return sanitize_text_field( $anon_id );
+		return $anon_id;
 	}
 }

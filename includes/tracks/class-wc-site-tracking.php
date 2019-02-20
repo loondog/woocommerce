@@ -58,7 +58,7 @@ class WC_Site_Tracking {
 	public static function enqueue_scripts() {
 
 		// Add w.js to the page.
-		wp_enqueue_script( 'woo-tracks', '//stats.wp.com/w.js', array(), gmdate( 'YW' ), true );
+		wp_enqueue_script( 'woo-tracks', 'https://stats.wp.com/w.js', array(), gmdate( 'YW' ), true );
 
 		// Expose tracking via a function in the wcSettings global namespace.
 		wc_enqueue_js(

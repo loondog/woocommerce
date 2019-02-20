@@ -87,7 +87,7 @@ class WC_Site_Tracking {
 				window.wcSettings.recordEvent = function() {};
 			'
 			);
-			
+
 			return;
 		}
 

@@ -100,25 +100,32 @@ class WC_Tracks_Client {
 	 */
 	public static function get_identity( $user_id ) {
 		if ( class_exists( 'Jetpack' ) ) {
-			include_once( ABSPATH . 'wp-content/plugins/jetpack/_inc/lib/tracks/client.php' );
+
+			include_once ABSPATH . 'wp-content/plugins/jetpack/_inc/lib/tracks/client.php';
+
 			if ( function_exists( 'jetpack_tracks_get_identity' ) ) {
 				return jetpack_tracks_get_identity( $user_id );
 			}
 		}
+
 		// Start with a previously set cookie.
-		$anon_id = isset( $_COOKIE['tk_ai'] ) ? $_COOKIE['tk_ai'] : false;
+		$anon_id = isset( $_COOKIE['tk_ai'] ) ? wp_unslash( $_COOKIE['tk_ai'] ) : false; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
 		// If there is no cookie, apply a saved id.
 		if ( ! $anon_id ) {
 			$anon_id = get_user_meta( $user_id, 'woo_tracks_anon_id', true );
 		}
+
 		// If an id is still not found, create one and save it.
 		if ( ! $anon_id ) {
 			$anon_id = self::get_anon_id();
 			update_user_meta( $user_id, 'woo_tracks_anon_id', $anon_id );
 		}
-		if ( ! isset( $_COOKIE['tk_ai'] ) && ! headers_sent() ) {
-			setcookie( 'tk_ai', $anon_id );
+
+		if ( ! isset( $_COOKIE['tk_ai'] ) ) {
+			wc_setcookie( 'tk_ai', $anon_id );
 		}
+
 		return array(
 			'_ut' => 'anon',
 			'_ui' => $anon_id,
@@ -150,15 +157,17 @@ class WC_Tracks_Client {
 
 				$anon_id = 'woo:' . base64_encode( $binary );
 
-				if ( ! headers_sent()
-					&& ! ( defined( 'REST_REQUEST' ) && REST_REQUEST )
-					&& ! ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
+				// Don't set cookie on API requests, https://github.com/Automattic/jetpack/pull/7934.
+				// @todo: Do we need these checks? If so, should they be included in wc_setcookie?
+				if (
+					! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) &&
+					! ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST )
 				) {
-					setcookie( 'tk_ai', $anon_id );
+					wc_setcookie( 'tk_ai', $anon_id );
 				}
 			}
 		}
 
-		return $anon_id;
+		return sanitize_text_field( $anon_id );
 	}
 }

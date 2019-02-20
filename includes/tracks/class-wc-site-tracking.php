@@ -56,8 +56,11 @@ class WC_Site_Tracking {
 	 * Add scripts required to record events from javascript.
 	 */
 	public static function enqueue_scripts() {
+
+		// Add w.js to the page.
 		wp_enqueue_script( 'woo-tracks', '//stats.wp.com/w.js', array(), gmdate( 'YW' ), true );
 
+		// Expose tracking via a function in the wcSettings global namespace.
 		wc_enqueue_js(
 			"
 			window.wcSettings = window.wcSettings || {};
@@ -74,13 +77,17 @@ class WC_Site_Tracking {
 	 * Init tracking.
 	 */
 	public static function init() {
+
 		if ( ! self::is_tracking_enabled() ) {
+
+			// Define window.wcSettings.recordEvent in case there is an attempt to use it when tracking is turned off.
 			wc_enqueue_js(
 				'
 				window.wcSettings = window.wcSettings || {};
 				window.wcSettings.recordEvent = function() {};
 			'
 			);
+			
 			return;
 		}
 

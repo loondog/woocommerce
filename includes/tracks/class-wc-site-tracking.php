@@ -52,17 +52,22 @@ class WC_Site_Tracking {
 		return true;
 	}
 
+	/**
+	 * Add scripts required to record events from javascript.
+	 */
 	public static function enqueue_scripts() {
 		wp_enqueue_script( 'woo-tracks', '//stats.wp.com/w.js', array(), gmdate( 'YW' ), true );
 
-		wc_enqueue_js( "
+		wc_enqueue_js(
+			"
 			window.wcSettings = window.wcSettings || {};
 			window.wcSettings.recordEvent = function( event, eventProperties ) {
 				var eventName = '" . WC_Tracks::PREFIX . "' + event;
 				window._tkq = window._tkq || [];
 				window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
 			}
-		" );
+		"
+		);
 	}
 
 	/**
@@ -70,10 +75,12 @@ class WC_Site_Tracking {
 	 */
 	public static function init() {
 		if ( ! self::is_tracking_enabled() ) {
-			wc_enqueue_js( "
+			wc_enqueue_js(
+				'
 				window.wcSettings = window.wcSettings || {};
 				window.wcSettings.recordEvent = function() {};
-			" );
+			'
+			);
 			return;
 		}
 

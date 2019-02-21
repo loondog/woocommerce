@@ -1932,3 +1932,17 @@ function wc_update_354_modify_shop_manager_caps() {
 function wc_update_354_db_version() {
 	WC_Install::update_db_version( '3.5.4' );
 }
+
+/**
+ * Cache the store's gross revenue total for use in Tracks.
+ */
+function wc_update_360_cache_orders_gross() {
+	WC_Tracks::update_revenue_cache();
+}
+
+/**
+ * Update DB Version.
+ */
+function wc_update_360_db_version() {
+	WC_Install::update_db_version( '3.6.0' );
+}

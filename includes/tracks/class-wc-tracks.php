@@ -18,6 +18,18 @@ class WC_Tracks {
 	const PREFIX = 'wca_test_';
 
 	/**
+	 * Option name for total store revenue.
+	 */
+	const REVENUE_CACHE_OPTION = 'woocommerce_tracker_orders_gross';
+
+	public static function init() {
+		add_action( 'woocommerce_new_order', array( __CLASS__, 'update_revenue_cache' ) );
+		add_action( 'woocommerce_update_order', array( __CLASS__, 'update_revenue_cache' ) );
+		add_action( 'woocommerce_delete_order', array( __CLASS__, 'update_revenue_cache' ) );
+		add_action( 'woocommerce_order_refunded', array( __CLASS__, 'update_revenue_cache' ) );
+	}
+
+	/**
 	 * Get the identity to send to tracks.
 	 *
 	 * @todo Determine the best way to identify sites/users with/without Jetpack connection.
@@ -65,6 +77,16 @@ class WC_Tracks {
 
 	}
 
+	public static function update_revenue_cache() {
+		update_option( self::REVENUE_CACHE_OPTION, WC_Tracker::get_order_totals() );
+	}
+
+	public static function get_total_revenue() {
+		$total_revenue = get_option( self::REVENUE_CACHE_OPTION );
+
+		return empty( $total_revenue['gross'] ) ? null : $total_revenue['gross'];
+	}
+
 	/**
 	 * Gather blog related properties.
 	 *
@@ -73,10 +95,10 @@ class WC_Tracks {
 	 */
 	public static function get_blog_details( $user_id ) {
 		return array(
-			// @todo Add revenue/product info and url similar to wc-tracker.
-			'url'       => get_option( 'siteurl' ),
-			'blog_lang' => get_user_locale( $user_id ),
-			'blog_id'   => ( class_exists( 'Jetpack' ) && Jetpack_Options::get_option( 'id' ) ) || null,
+			'url'          => get_option( 'siteurl' ),
+			'blog_lang'    => get_user_locale( $user_id ),
+			'blog_id'      => ( class_exists( 'Jetpack' ) && Jetpack_Options::get_option( 'id' ) ) || null,
+			'orders_gross' => self::get_total_revenue(),
 		);
 	}
 

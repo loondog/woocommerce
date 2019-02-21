@@ -16,6 +16,16 @@ class WC_Orders_Tracking {
 	 */
 	public static function init() {
 		add_action( 'woocommerce_order_edit_status', array( __CLASS__, 'track_orders_edit_status_change' ), 10, 2 );
+		add_action( 'admin_init', array( __CLASS__, 'track_orders_view' ), 10 );
+	}
+
+	/**
+	 * Send a Tracks event when the Orders page is viewed.
+	 */
+	public static function track_orders_view() {
+		if ( '/wp-admin/edit.php' === $_SERVER['SCRIPT_NAME'] && 'shop_order' === $_GET['post_type'] ) {
+			WC_Tracks::record_event( 'orders_view' );
+		}
 	}
 
 	/**
